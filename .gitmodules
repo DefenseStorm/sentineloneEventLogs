@@ -1,0 +1,3 @@
+[submodule "ds-integration"]
+	path = ds-integration
+	url = https://github.com/DefenseStorm/ds-integration.git

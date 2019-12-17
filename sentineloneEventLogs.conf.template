@@ -1,0 +1,11 @@
+# conf file must be in same directory as script
+[json]
+app_name = SentinalOne EventLogs
+version = 1.0
+
+[sentinelone]
+token = 
+console = 
+site = 
+state_dir = ./state
+
