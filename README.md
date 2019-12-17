@@ -2,7 +2,7 @@ SentinelOne Integration for DefenseStorm
 
 to pull this repository and submodules:
 
-git clone --recurse-submodules https://github.com/DefenseStorm/duoEventLogs.git
+git clone --recurse-submodules https://github.com/DefenseStorm/sentineloneEventLogs.git
 
 1. If this is the first integration on this DVM, Do the following:
 
