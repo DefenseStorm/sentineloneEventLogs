@@ -128,7 +128,7 @@ class integration(object):
         entry['createdAt'] = tmp['createdAt']
         entry['createdDate'] = tmp['createdDate']
         entry['resolved'] = tmp['resolved']
-        entry['message'] =  tmp['description']
+        entry['description'] =  tmp['description']
         entry['engines'] = tmp['engines']
         entry['fileCreatedDate'] = tmp['fileCreatedDate']
         entry['fileDisplayName'] = tmp['fileDisplayName']
@@ -169,6 +169,13 @@ class integration(object):
         entry['username'] = tmp['username']
         entry['whiteningOptions'] = tmp['whiteningOptions']
 
+	# Build the message entry:
+	entry['message'] = entry['threatName'] + ': Kill:' + entry['mitigation_kill'] + ', Quarantine:' + entry['mitigation_quar'] + ', Host:' + entry['agentComputerName']
+
+	# Build the compatible timestamp
+	entry_time = datetime.datetime.strptime(entry['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
+	entry['timestamp'] = entry_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
         return entry
 
 
@@ -177,7 +184,7 @@ class integration(object):
         last_run = self.ds.get_state(self.state_dir)
         if last_run == None:
             self.ds.log("INFO", "No datetime found, defaulting to last 12 hours for results")
-            last_run = datetime.datetime.utcnow() - datetime.timedelta(hours=12)
+            last_run = datetime.datetime.utcnow() - datetime.timedelta(hours=24)
         current_run = datetime.datetime.utcnow()
 
         last_run_str = last_run.strftime("%Y-%m-%dT%H:%M:%SZ")
