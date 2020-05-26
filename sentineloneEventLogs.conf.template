@@ -1,6 +1,6 @@
 # conf file must be in same directory as script
 [json]
-app_name = SentinalOne EventLogs
+app_name = SentinelOne EventLogs
 version = 1.0
 
 [sentinelone]
