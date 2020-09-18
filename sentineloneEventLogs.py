@@ -42,7 +42,7 @@ class integration(object):
         for tmp in raw:
             if 'categoryId' in tmp.keys():
                 cID = tmp['categoryId']
-            else
+            else:
                 cID = ''
             cName = tmp['categoryName']
             descripClean = re.sub("<.*?>", " ", tmp['description'])
