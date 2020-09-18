@@ -40,7 +40,10 @@ class integration(object):
         raw = r.json()['data']['indicators']
         si = {}
         for tmp in raw:
-            cID = tmp['categoryId']
+            if 'categoryId' in tmp.keys():
+                cID = tmp['categoryId']
+            else
+                cID = ''
             cName = tmp['categoryName']
             descripClean = re.sub("<.*?>", " ", tmp['description'])
             id = int(tmp['id'])
