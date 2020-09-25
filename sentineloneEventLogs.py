@@ -120,7 +120,8 @@ class integration(object):
         entry['agentOsType'] = tmp['agentOsType']
         entry['agentVersion'] = tmp['agentVersion']
         entry['annotation'] = tmp['annotation']
-        entry['annotationUrl'] = tmp['annotationUrl']
+        if 'annotationUrl' in tmp.keys():
+            entry['annotationUrl'] = tmp['annotationUrl']
         entry['browserType'] = tmp['browserType']
         entry['certId'] = tmp['certId'].encode("utf-8")
         entry['classification'] = tmp['classification']
@@ -203,7 +204,12 @@ class integration(object):
 
         for item in threatdata:
             for item in threatdata:
-                self.ds.writeJSONEvent(self.parseResponse(item))
+                try:
+                    parsed_item = self.parseResponse(item)
+                except Exception as e:
+                    self.ds.log('ERROR', 'ERROR: ' + traceback.format_exc().replace('\n', ' '))
+                    continue
+                self.ds.writeJSONEvent(parsed_item)
 
         self.ds.set_state(self.state_dir, current_run)
     
