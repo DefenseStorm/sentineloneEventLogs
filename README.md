@@ -15,10 +15,12 @@ This integration is intended to be installed on the DefenseStorm DVM.  You shoul
 		filter f_messages { level(info,notice,warn) and not facility(auth,authpriv,cron,daemon,mail,news,local7); };
 
 	 • Run the following command to restart syslog-ng
+	 
 		service syslog-ng restart
 
 3. Run the following command to copy the template config file and update the settings:
-	cp sentineloneEventLogs.conf.template sentineloneEventLogs.conf
+
+		cp sentineloneEventLogs.conf.template sentineloneEventLogs.conf
 
 4. Edit the configuration in the sentineloneEventLogs.conf file:
 
@@ -34,4 +36,4 @@ This integration is intended to be installed on the DefenseStorm DVM.  You shoul
 
 5. Add the following entry to the root crontab so the script will run every 5 minutes:
 
-	*/5 * * * * cd /usr/local/sentineloneEventLogs; ./sentineloneEventLogs.py
+		*/5 * * * * cd /usr/local/sentineloneEventLogs; ./sentineloneEventLogs.py
