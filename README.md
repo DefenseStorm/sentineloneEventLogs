@@ -29,9 +29,9 @@ This integration is intended to be installed on the DefenseStorm DVM.  You shoul
 		URL.  for example "myhost" is the Console Name for "myhost.sentinelone.net".
 	- Add the following to the config.d file:
 		
-		token = <API Token generatet in SentinelOne Management Console
-		site = <Site Name>
-		Console = <Console Name>
+			token = <API Token generatet in SentinelOne Management Console
+			site = <Site Name>
+			Console = <Console Name>
 
 5. Add the following entry to the root crontab so the script will run every 5 minutes:
 
