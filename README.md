@@ -4,7 +4,7 @@ This integration is intended to be installed on the DefenseStorm DVM.  You shoul
 
 1. Pull the repository and submodules:
 
-	git clone --recurse-submodules https://github.com/DefenseStorm/sentineloneEventLogs.git
+		git clone --recurse-submodules https://github.com/DefenseStorm/sentineloneEventLogs.git
 
 2. If this is the first integration on this DVM, do the following:
 	
