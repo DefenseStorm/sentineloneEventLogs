@@ -30,7 +30,7 @@ class integration(object):
         'fullScopeDetails': 'details',
         'groupId': 'group_id',
         'groupName': 'group_name',
-        'interface': 'nterface',
+        'interface': 'interface',
         'lastLoggedInUserName': 'username',
         'osType': 'os_type',
         'productId': 'product_id',
