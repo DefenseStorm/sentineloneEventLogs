@@ -17,17 +17,45 @@ API_SITES = 'web/api/v2.0/sites'
 API_STATIC_INDICATORS = 'web/api/v2.0/threats/static-indicators'
 API_ACTIVITY_TYPES = 'web/api/v2.0/activities/types'
 
-
 class integration(object):
+
+    JSON_field_mappings = {
+        'accountId': 'account_id',
+        'accountName': 'account_name',
+        'agentId': 'agent_id',
+        'computerName': 'computer_name',
+        'deviceName': 'device_name',
+        'eventId': 'event_id',
+        'eventType': 'event_type',
+        'fullScopeDetails': 'details',
+        'groupId': 'group_id',
+        'groupName': 'group_name',
+        'interface': 'nterface',
+        'lastLoggedInUserName': 'username',
+        'osType': 'os_type',
+        'productId': 'product_id',
+        'ruleId': 'rule_id',
+        'ruleName': 'rule_name',
+        'ruleType': 'rule_type',
+        'scopeName': 'policy_scope_name',
+        'siteName': 'site',
+        'vendorId': 'vendor',
+        'version': 'version',
+        'id': 'id',
+        'primaryDescription': 'message',
+        'siteId': 'site_id',
+        'threatId': 'threat_id',
+        'userId': 'user_id',
+    }
 
     def get_site_id(self):
         params = {
-            "name": self.ds.config_get('sentinelone', 'site')
+            'name': self.ds.config_get('sentinelone', 'site')
             }
         r = requests.get(self.SRC_hostname+API_SITES, headers=self.SRC_headers, params=params)
         if r.status_code != 200:
-            #print ("Error: ", r.json())
-            self.ds.log("ERROR", r.json())
+            #print ('Error: ', r.json())
+            self.ds.log('ERROR', r.json())
             sys.exit()
         return r.json()['data']['sites'][0]['id']
 
@@ -36,8 +64,8 @@ class integration(object):
         self.ds.log('INFO', 'Loading Activity Types...')
         r = requests.get(self.SRC_hostname+API_ACTIVITY_TYPES, headers=self.SRC_headers)
         if r.status_code != 200:
-            print ("Error: ", r.status_code)
-            self.ds.log("ERROR", r.status_code)
+            print ('Error: ', r.status_code)
+            self.ds.log('ERROR', r.status_code)
             sys.exit()
         jdata = r.json()
         at = {}
@@ -52,8 +80,8 @@ class integration(object):
         self.ds.log('INFO', 'Loading Static Indicators...')
         r = requests.get(self.SRC_hostname+API_STATIC_INDICATORS, headers=self.SRC_headers)
         if r.status_code != 200:
-            print ("Error: ", r.status_code)
-            self.ds.log("ERROR", r.status_code)
+            print ('Error: ', r.status_code)
+            self.ds.log('ERROR', r.status_code)
             sys.exit()
         raw = r.json()['data']['indicators']
         si = {}
@@ -63,7 +91,7 @@ class integration(object):
             else:
                 cID = ''
             cName = tmp['categoryName']
-            descripClean = re.sub("<.*?>", " ", tmp['description'])
+            descripClean = re.sub('<.*?>', ' ', tmp['description'])
             id = int(tmp['id'])
             si[id] = {'catid': cID, 'catname': cName, 'desc': descripClean}
 
@@ -75,16 +103,16 @@ class integration(object):
 
         while (cursor != None):
             params = {
-                "siteIds": site_id,
-                "limit": 100,
-                "cursor": cursor,
-                "createdAt__gte": lastrun,
-                "createdAt__lt": currentrun,
+                'siteIds': site_id,
+                'limit': 100,
+                'cursor': cursor,
+                'createdAt__gte': lastrun,
+                'createdAt__lt': currentrun,
             }
             r = requests.get(self.SRC_hostname+API_PATH+data_type, headers=self.SRC_headers, params=params)
             if r.status_code != 200:
-                self.ds.log("ERROR", str(r.status_code) + r.text)
-                sys.exit("Error while getting datalist, exiting..")
+                self.ds.log('ERROR', str(r.status_code) + r.text)
+                sys.exit('Error while getting datalist, exiting..')
             cursor = r.json()['pagination']['nextCursor']
             datalist.extend(r.json()['data'])
         return datalist
@@ -92,7 +120,7 @@ class integration(object):
     def parseActivity(self, tmp):
         entry = {}
         if 'data' not in tmp.keys():
-            self.ds.log("ERROR", 'Bad activity format: ' + str(tmp))
+            self.ds.log('ERROR', 'Bad activity format: ' + str(tmp))
             return tmp
         for item in tmp.keys():
             if item == 'data':
@@ -100,7 +128,7 @@ class integration(object):
                     if data_item in ['accountName']:
                         continue
                     if data_item in entry.keys():
-                        self.ds.log("ERROR", 'Bad activity data format for field ' + data_item + ': ' + str(tmp))
+                        self.ds.log('ERROR', 'Bad activity data format for field ' + data_item + ': ' + str(tmp))
                         return tmp
                     entry[data_item] = tmp['data'][data_item]
             else:
@@ -113,27 +141,27 @@ class integration(object):
     def parseResponse(self, tmp):
         entry={}
         if tmp['mitigationReport']['network_quarantine']['status'] is None:
-            entry['mynetwork_quarantine'] = "None"
+            entry['mynetwork_quarantine'] = 'None'
         else:
             entry['mynetwork_quarantine'] = tmp['mitigationReport']['network_quarantine']['status']
 
         if tmp['mitigationReport']['kill']['status'] is None:
-            entry['mitigation_kill'] = "None"
+            entry['mitigation_kill'] = 'None'
         else:
             entry['mitigation_kill'] = tmp['mitigationReport']['kill']['status']
 
         if tmp['mitigationReport']['quarantine']['status'] is None:
-            entry['mitigation_quar'] = "None"
+            entry['mitigation_quar'] = 'None'
         else:
             entry['mitigation_quar'] = tmp['mitigationReport']['quarantine']['status']
 
         if tmp['mitigationReport']['remediate']['status'] is None:
-            entry['mitigation_rem'] = "None"
+            entry['mitigation_rem'] = 'None'
         else:
             entry['mitigation_rem'] = tmp['mitigationReport']['remediate']['status']
 
         if tmp['mitigationReport']['rollback']['status'] is None:
-            entry['mitigation_roll'] = "None"
+            entry['mitigation_roll'] = 'None'
         else:
             entry['mitigation_roll'] = tmp['mitigationReport']['rollback']['status']
 
@@ -161,7 +189,7 @@ class integration(object):
         if 'annotationUrl' in tmp.keys():
             entry['annotationUrl'] = tmp['annotationUrl']
         entry['browserType'] = tmp['browserType']
-        entry['certId'] = tmp['certId'].encode("utf-8")
+        entry['certId'] = tmp['certId'].encode('utf-8')
         entry['classification'] = tmp['classification']
         entry['classificationSource'] = tmp['classificationSource']
         entry['classifierName'] = tmp['classifierName']
@@ -201,7 +229,7 @@ class integration(object):
         entry['initiatedByDescription'] = tmp['initiatedByDescription']
         entry['mitigationMode'] = tmp['mitigationMode']
         entry['mitigationStatus'] = tmp['mitigationStatus']
-        entry['publisher'] = tmp['publisher'].encode("utf-8")
+        entry['publisher'] = tmp['publisher'].encode('utf-8')
         entry['rank'] = tmp['rank']
         entry['siteId'] = tmp['siteId']
         entry['siteName'] = tmp['siteName']
@@ -216,7 +244,7 @@ class integration(object):
 
 	# Build the compatible timestamp
         entry_time = datetime.datetime.strptime(entry['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        entry['timestamp'] = entry_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+        entry['timestamp'] = entry_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         return entry
 
@@ -225,24 +253,24 @@ class integration(object):
         self.state_dir = self.ds.config_get('sentinelone', 'state_dir')
         last_run = self.ds.get_state(self.state_dir)
         if last_run == None:
-            self.ds.log("INFO", "No datetime found, defaulting to last 12 hours for results")
+            self.ds.log('INFO', 'No datetime found, defaulting to last 12 hours for results')
             last_run = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
         current_run = datetime.datetime.utcnow()
 
-        last_run_str = last_run.strftime("%Y-%m-%dT%H:%M:%SZ")
-        current_run_str = current_run.strftime("%Y-%m-%dT%H:%M:%SZ")
+        last_run_str = last_run.strftime('%Y-%m-%dT%H:%M:%SZ')
+        current_run_str = current_run.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         self.site_id = self.get_site_id()
         self.staticIndicators = self.get_staticIndicators()
         self.activityTypes = self.get_activityTypes()
-        self.ds.log("INFO", "From Site: "+self.ds.config_get('sentinelone', 'site')+" [ID: "+ self.site_id +"]")
+        self.ds.log('INFO', 'From Site: '+self.ds.config_get('sentinelone', 'site')+' [ID: '+ self.site_id +']')
 
 
         # What are 'groups', applications for?
         for data_type in ['threats', 'agents', 'activities']:
-            self.ds.log("INFO", "Getting " + data_type + " events from: " + last_run_str + " to " + current_run_str)
+            self.ds.log('INFO', 'Getting ' + data_type + ' events from: ' + last_run_str + ' to ' + current_run_str)
             data = self.get_datalist(self.site_id, data_type, last_run_str, current_run_str)
-            self.ds.log("INFO", "Received " + str(len(data)) + " events for type " + data_type)
+            self.ds.log('INFO', 'Received ' + str(len(data)) + ' events for type ' + data_type)
 
             for item in data:
                 try:
@@ -256,7 +284,7 @@ class integration(object):
                     self.ds.log('ERROR', 'ERROR: ' + traceback.format_exc().replace('\n', ' '))
                     continue
                 parsed_item['category'] = data_type
-                self.ds.writeJSONEvent(parsed_item)
+                self.ds.writeJSONEvent(parsed_item, JSON_field_mappings = self.JSON_field_mappings)
 
         self.ds.set_state(self.state_dir, current_run)
     
@@ -284,7 +312,7 @@ class integration(object):
         self.SRC_headers = None
     
         try:
-            opts, args = getopt.getopt(argv,"htnld:",["datedir="])
+            opts, args = getopt.getopt(argv,'htnld:',['datedir='])
         except getopt.GetoptError:
             self.usage()
             sys.exit(2)
@@ -292,9 +320,9 @@ class integration(object):
             if opt == '-h':
                 self.usage()
                 sys.exit()
-            elif opt in ("-t"):
+            elif opt in ('-t'):
                 self.testing = True
-            elif opt in ("-l"):
+            elif opt in ('-l'):
                 self.send_syslog = False
     
         try:
@@ -307,10 +335,10 @@ class integration(object):
                 pass
         try:
             self.SRC_headers = {
-                    "Content-type": "application/json",
-                    "Authorization": "APIToken " + self.ds.config_get('sentinelone', 'token')
+                    'Content-type': 'application/json',
+                    'Authorization': 'APIToken ' + self.ds.config_get('sentinelone', 'token')
                     }
-            self.SRC_hostname = 'https://'+self.ds.config_get('sentinelone', 'console')+".sentinelone.net/"
+            self.SRC_hostname = 'https://'+self.ds.config_get('sentinelone', 'console')+'.sentinelone.net/'
         except Exception as e:
             traceback.print_exc()
             try:
@@ -320,6 +348,6 @@ class integration(object):
 
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     i = integration(sys.argv[1:]) 
     i.run()
