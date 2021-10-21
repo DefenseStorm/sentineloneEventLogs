@@ -46,6 +46,7 @@ class integration(object):
         'siteId': 'site_id',
         'threatId': 'threat_id',
         'userId': 'user_id',
+        'eventTime': 'timestamp',
     }
 
     def get_site_id(self):
