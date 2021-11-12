@@ -47,6 +47,19 @@ class integration(object):
         'threatId': 'threat_id',
         'userId': 'user_id',
         'eventTime': 'timestamp',
+        'agentComputerName': 'computer_name',
+        'agentDomain': 'domain',
+        'agentInfected': 'infected',
+        'agentIp': 'client_ip',
+        'agentMachineType': 'device_type',
+        'agentNetworkStatus': 'machine_status',
+        'fileExtensionType': 'file_type',
+        'fileContentHash': 'file_hash',
+        'fileDisplayName': 'file_name',
+        'filePath': 'file_path',
+        'initiatedBy': 'initiated_by',
+        'maliciousProcessingArguments': 'threat_handled',
+        'threatName': 'threat_name',
     }
 
     def get_site_id(self):
